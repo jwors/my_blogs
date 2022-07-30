@@ -36,4 +36,14 @@
     2. Etag 和 If-None-Match 资源内容标识优先级高，
 
 6. 三次握手
+   1. 目的:是为了保证双方信息发送和接受的能力
+   2. 过程
+      1. 浏览器发送一个 SYN seq num = client_isn
+      2. Server 发送一个 SYN+ACK ,然后再 client_isn + 1，再补充一个 server_isn
+      3. Client 发送一个 ACK 和 server_isn + 1 ,这一步可以传输数据
+
 7. 四次挥手
+   1. Client 发送一个FIN 为 1的报文，此时 Client 进入 FIN_WAIT_1
+   2. Server 发送一个 ACK 报文， Server 进入 CLOSE_WAIT 状态，当客户端收到ACK 报文之后，变为 FIN_WAIT_2
+   3. Server 发送一个 FIN 报文，服务端进入LAST_ACK 状态
+   4. 客户端收到服务端的 FIN 报文后， 回一个 ACK 应答报文，之后进入 TIME_WAIT 状态，服务端进入 CLOSED 状态 
