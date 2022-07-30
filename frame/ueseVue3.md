@@ -42,3 +42,20 @@
             ]
         </script>
     ~~~
+
+3. expose
+    ~~~javascript
+    // 用于限制父组件获取子组件实例属性
+    export default {
+        setup(props, { expose }) {
+            // make the instance "closed" -
+            // i.e. do not expose anything to the parent
+            expose()
+
+            const publicCount = ref(0)
+            const privateCount = ref(0)
+            // selectively expose local state
+            expose({ count: publicCount })
+        }
+    }
+    ~~~
