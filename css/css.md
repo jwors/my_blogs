@@ -1,5 +1,16 @@
-## css优先级
-1. id(#app) > 类 (class) > 属性选择器 (a[ref='eee']) > 伪类选择器(li:last-child) > 标签选择器 > 伪元素选择器(li:last-child) > 通配符选择器
+## css选择器
+1.!important > 行内样式 >  id(#app) > 类 (class) | 属性选择器 (a[ref='eee']) | 伪类选择器(li:active) > 标签选择器 || 伪元素选择器(li::before) > 通配符选择器
+
+## css组合器
+1. + 选择相邻元素——相邻兄弟选择器 (+) 介于两个选择器之间，当第二个元素紧跟在第一个元素之后，并且两个元素都是属于同一个父元素的子元素，则第二个元素将被选中
+2. ~ 选择兄弟元素——兄弟选择符，位置无须紧邻，只须同层级，A~B 选择A元素之后所有同层级B元素
+
+## css 等比
+1. aspect-ratio
+
+## 伪类和伪元素区别
+1. 伪类前面一个:，伪元素 ::
+2. 常用的伪元素: ::before  ::after  ::selection
 
 ## display 属性
 1. none、block、inline、inline-block、list-item、table、inherit
