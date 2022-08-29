@@ -31,3 +31,8 @@
 5. input标签新增属性：placeholder、autocomplete、autofocus、required
 6. history API：go、forward、back、pushstate
 
+
+## Data URL
+1. 就是将图片资源转为Base64 直接嵌入网页
+2. 优点是减少http请求
+3. 缺点是:Base64编码后图片图片会比转换之前的图片大上三分之一，并且不可以缓存
