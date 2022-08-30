@@ -1,6 +1,6 @@
 # Vue源码 2.6.14
 
-### watch中的deep做了什么？ src/core/observer/watcher.js
+## watch中的deep做了什么？ src/core/observer/watcher.js
 > 在get中的 <b>finally</b> 判断是否使用 <b>deep</b>
 ~~~ javascript
 
@@ -36,4 +36,26 @@ function _traverse (val: any, seen: SimpleSet) {
     while (i--) _traverse(val[keys[i]], seen)
   }
 }
+~~~
+
+## Vue响应式原理
+通过 /state/core/instance 中的 initState 方法,对script内的属性进行操作
+~~~ javascript
+  export function initState (vm: Component) {
+    vm._watchers = []
+    const opts = vm.$options
+    if (opts.props) initProps(vm, opts.props)
+    if (opts.methods) initMethods(vm, opts.methods)
+    if (opts.data) {
+      initData(vm)
+    } else {
+      observe(vm._data = {}, true /* asRootData */)
+    }
+    // 进入 计算属性
+    if (opts.computed) initComputed(vm, opts.computed)
+    if (opts.watch && opts.watch !== nativeWatch) {
+      // 构建 watch
+      initWatch(vm, opts.watch)
+    }
+  }
 ~~~
