@@ -39,4 +39,22 @@
 ### React state 那些事
 
 #### 更新机制 异步OR同步
+
    1. 在react18之前，在Promise的状态更新、js原生事件、setTimeout、setInterval..中是同步的。在react的合成事件中，是异步的。在[React18](https://github.com/reactwg/react-18/discussions/21)之后就是异步的
+
+```javascript
+/* by https://github.com/reactwg/react-18/discussions/21 */
+
+import { flushSync } from 'react-dom'; // Note: react-dom, not react
+
+function handleClick() {
+  flushSync(() => {
+    setCounter(c => c + 1);
+  });
+  // React has updated the DOM by now
+  flushSync(() => {
+    setFlag(f => !f);
+  });
+  // React has updated the DOM by now
+}
+```
