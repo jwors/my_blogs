@@ -33,3 +33,10 @@
      3. Normal: 网络请求等不需要用户立即感受的
      4. Low 低等级，可以延后但是要执行的
      5. Idle 最低等级 可以不执行
+
+***
+
+### React state 那些事
+
+#### 更新机制 异步OR同步
+   1. 在react18之前，在Promise的状态更新、js原生事件、setTimeout、setInterval..中是同步的。在react的合成事件中，是异步的。在[React18](https://github.com/reactwg/react-18/discussions/21)之后就是异步的
