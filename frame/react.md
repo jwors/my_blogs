@@ -41,6 +41,7 @@
 #### 更新机制 异步OR同步
 
    1. 在react18之前，在Promise的状态更新、js原生事件、setTimeout、setInterval..中是同步的。在react的合成事件中，是异步的。在[React18](https://github.com/reactwg/react-18/discussions/21)之后就是异步的
+   2. 所谓的合成事件就是react里面的机制，原生事件就是 document,getElementById('#dd') 绑定的事件
 
 ```javascript
 /* by https://github.com/reactwg/react-18/discussions/21 */
