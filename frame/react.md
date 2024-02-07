@@ -59,3 +59,8 @@ function handleClick() {
   // React has updated the DOM by now
 }
 ```
+***
+
+### 合成事件
+
+  > 什么是合成事件：
