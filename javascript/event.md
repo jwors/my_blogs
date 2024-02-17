@@ -13,4 +13,5 @@
 ```
 
 #### 事件捕获
+
  > [事件捕获](https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Building_blocks/Events#%E4%BA%8B%E4%BB%B6%E5%A7%94%E6%89%98)
