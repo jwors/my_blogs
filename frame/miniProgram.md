@@ -17,7 +17,7 @@ sequenceDiagram
   User ->> User: 通过按钮获取拿到iv phoneCode  encryptedData Wx.login拿去 code 
   User ->> Java: 请求发送获取登录凭着 openId等
   Java ->> Wx: appid code 
-  WX ->> Java: 基于openId  Session_key
+  Wx ->> Java: 基于openId  Session_key
   Java ->> User: 返回登录状态 Token 等信息
   User ->> User: 存储登录信息
    
