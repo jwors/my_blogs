@@ -74,4 +74,9 @@ function objectFactory(obj,...rest){
 
 const person1 = myNew(Person, 'Alice', 30);
 ```
-  
+
+## isNaN and Number.isNana of distinction
+
+* If the argument(参数) passed to isNaN() is not a number, isNaN() returns true.
+* If the argument is a number, isNaN() tries to convert it to a number first. If the conversion is successful and the resulting value is NaN, isNaN() returns true. If the conversion results in a valid number, isNaN() returns false.
+* Number.isNaN： judge arg is NaN
