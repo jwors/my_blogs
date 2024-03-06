@@ -1,6 +1,7 @@
 ## 使用方法记录
 
 1. 未使用 steup
+
    ~~~javascript
     export default {
         props:{
@@ -24,6 +25,7 @@
    ~~~
 
 2. 使用 steup  
+
     ~~~javascript
         <script steup>
             //  这种使用更方便一些 
@@ -44,6 +46,7 @@
     ~~~
 
 3. expose
+
     ~~~javascript
     // 用于限制父组件获取子组件实例属性
     export default {

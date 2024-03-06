@@ -149,3 +149,112 @@ function _traverse (val: any, seen: SimpleSet) {
 }
 }
 ~~~
+
+___
+
+## Vue3 源码
+
+#### setup实现
+
+```typescript
+  /*
+    源码位置：packages\runtime-core\src\component.ts 
+    1. 如何是开发环境会判断 name、components等命令
+  */
+  function setupStatefulComponent(
+  instance: ComponentInternalInstance,
+  isSSR: boolean,
+) {
+  const Component = instance.type as ComponentOptions
+
+  // 如果是开发环境 就判断组件上选项的名字，如果不对就警告
+  if (__DEV__) {
+    if (Component.name) {
+      validateComponentName(Component.name, instance.appContext.config)
+    }
+    if (Component.components) {
+      const names = Object.keys(Component.components)
+      for (let i = 0; i < names.length; i++) {
+        validateComponentName(names[i], instance.appContext.config)
+      }
+    }
+    if (Component.directives) {
+      const names = Object.keys(Component.directives)
+      for (let i = 0; i < names.length; i++) {
+        validateDirectiveName(names[i])
+      }
+    }
+    if (Component.compilerOptions && isRuntimeOnly()) {
+      warn(
+        `"compilerOptions" is only supported when using a build of Vue that ` +
+          `includes the runtime compiler. Since you are using a runtime-only ` +
+          `build, the options should be passed via your build tool config instead.`,
+      )
+    }
+  }
+
+  // 2. call setup()
+  const { setup } = Component
+  // 如果不存在setup函数 就不进入
+  // 可知 setup 函数接收两个参数 分别是 props  context  
+  if (setup) {
+    /*
+      1. 如果setup函数接收了两个参数 就为其创建上下文
+      2. createSetupContext 作用是 限制父组件通过ref可获取子组件实例的内容
+    */ 
+    const setupContext = (instance.setupContext =
+      setup.length > 1 ? createSetupContext(instance) : null)
+
+    const reset = setCurrentInstance(instance)
+    // 暂停跟踪
+    pauseTracking()
+    const setupResult = callWithErrorHandling(
+      setup,
+      instance,
+      ErrorCodes.SETUP_FUNCTION,
+      [
+        __DEV__ ? shallowReadonly(instance.props) : instance.props,
+        setupContext,
+      ],
+    )
+    resetTracking()
+    reset()
+  //如果 setup 函数的返回值是 promise 类型，并且是服务端渲染的，则会等待继续执行。否则就会报错，说当前版本的 Vue 并不支持 setup 返回 promise 对象。
+    if (isPromise(setupResult)) {
+      setupResult.then(unsetCurrentInstance, unsetCurrentInstance)
+      if (isSSR) {
+        // return the promise so server-renderer can wait on it
+        return setupResult
+          .then((resolvedResult: unknown) => {
+            handleSetupResult(instance, resolvedResult, isSSR)
+          })
+          .catch(e => {
+            handleError(e, instance, ErrorCodes.SETUP_FUNCTION)
+          })
+      } else if (__FEATURE_SUSPENSE__) {
+        // async setup returned Promise.
+        // bail here and wait for re-entry.
+        instance.asyncDep = setupResult
+        if (__DEV__ && !instance.suspense) {
+          const name = Component.name ?? 'Anonymous'
+          warn(
+            `Component <${name}>: setup function returned a promise, but no ` +
+              `<Suspense> boundary was found in the parent component tree. ` +
+              `A component with async setup() must be nested in a <Suspense> ` +
+              `in order to be rendered.`,
+          )
+        }
+      } else if (__DEV__) {
+        warn(
+          `setup() returned a Promise, but the version of Vue you are using ` +
+            `does not support it yet.`,
+        )
+      }
+    } else {
+      handleSetupResult(instance, setupResult, isSSR)
+    }
+  } else {
+    finishComponentSetup(instance, isSSR)
+  }
+}
+```
