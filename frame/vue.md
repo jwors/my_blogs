@@ -1,7 +1,7 @@
 # Vue源码 2.6.14
 
 ## watch中的deep做了什么？ src/core/observer/watcher.js
->
+
 > 在get中的 <b>finally</b> 判断是否使用 <b>deep</b>
 
 ~~~ javascript
@@ -42,7 +42,23 @@ function _traverse (val: any, seen: SimpleSet) {
 
 ## Vue响应式原理
 
-通过 /state/core/instance 中的 initState 方法,对script内的属性进行操作
+1. 便利组件上的实例，判断时候有props、methods、data、computed、watch属性
+2. 有props 构建props
+   
+   1. 判断是否是子组件，是的话就要关闭观察者，因为子组件props来自父级，父级已经处理了,所以没必要再次处理
+   2. 当取props中的值是对象或者数组的时候，会有默认值，此时是和父组件没有关系的，那么开启观察者**toggleObserving**
+3. 有method 构建methods
+
+    1. 判断method里面是不是函数，不是就报错
+    2. 判断是否和props同名的
+    3. 是否和内置方法冲突 
+4. 有data 构建data
+
+   1. 判断data类型,如果不是对象就会在开发环境警告 data函数返回值类型是一个对象
+   2. 判判断是否和props、methods 冲突命名的
+5. 有计算属性,构建计算属性
+
+通过 /src/core/instance 中的 initState 方法,对script内的属性进行操作
 
 ~~~ javascript
   export function initState (vm: Component) {
