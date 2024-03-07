@@ -48,7 +48,7 @@
 3. expose
 
     ~~~javascript
-    // 用于限制父组件获取子组件实例属性
+    // 默认全部暴露子组件实例，有点使用就会用于限制父组件获取子组件实例属性
     export default {
         setup(props, { expose }) {
             // make the instance "closed" -

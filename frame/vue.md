@@ -1,7 +1,9 @@
 # Vue源码 2.6.14
 
 ## watch中的deep做了什么？ src/core/observer/watcher.js
+>
 > 在get中的 <b>finally</b> 判断是否使用 <b>deep</b>
+
 ~~~ javascript
 
 const seenObjects = new Set()
@@ -39,7 +41,9 @@ function _traverse (val: any, seen: SimpleSet) {
 ~~~
 
 ## Vue响应式原理
+
 通过 /state/core/instance 中的 initState 方法,对script内的属性进行操作
+
 ~~~ javascript
   export function initState (vm: Component) {
     vm._watchers = []
@@ -156,6 +160,16 @@ ___
 
 #### setup实现
 
+1. 执行一个 mountComponent 函数，创建组件实例
+2. 然后执行 setupComponent 设置组件实例,概述内该实例是否有状态的,如果是有状态的就 setupStatefulComponent 不是就返回null
+3. setupStatefulComponent 内判断当前实例上是否有 setup函数，如果有
+   1. 判断setup形参是否有context(上下文参数) 如果没有就返回null,有就创建上下文(createSetupContext)
+   2. 其中createSetupContext 对expose 做了类型判断，在不为空的前提下，typeof下的expose如何不是对象就会报错
+   3. 另外还判断了ssr
+4. 最后调用 **finishComponentSetup**
+   1. 内部检查了版本的兼容性，兼容了options api
+   2. 然后分别对template和render函数
+
 ```typescript
   /*
     源码位置：packages\runtime-core\src\component.ts 
@@ -255,6 +269,110 @@ ___
     }
   } else {
     finishComponentSetup(instance, isSSR)
+  }
+}
+
+export function finishComponentSetup(
+  instance: ComponentInternalInstance,
+  isSSR: boolean,
+  skipOptions?: boolean,
+) {
+  const Component = instance.type as ComponentOptions
+
+  // 检查兼容性
+  if (__COMPAT__) {
+    convertLegacyRenderFn(instance)
+
+    if (__DEV__ && Component.compatConfig) {
+      validateCompatConfig(Component.compatConfig)
+    }
+  }
+
+  // template / render function normalization
+  // could be already set when returned from setup()
+  if (!instance.render) {
+    // only do on-the-fly compile if not in SSR - SSR on-the-fly compilation
+    // is done by server-renderer
+    if (!isSSR && compile && !Component.render) {
+      const template =
+        (__COMPAT__ &&
+          instance.vnode.props &&
+          instance.vnode.props['inline-template']) ||
+        Component.template ||
+        resolveMergedOptions(instance).template
+      if (template) {
+        if (__DEV__) {
+          startMeasure(instance, `compile`)
+        }
+        const { isCustomElement, compilerOptions } = instance.appContext.config
+        const { delimiters, compilerOptions: componentCompilerOptions } =
+          Component
+        const finalCompilerOptions: CompilerOptions = extend(
+          extend(
+            {
+              isCustomElement,
+              delimiters,
+            },
+            compilerOptions,
+          ),
+          componentCompilerOptions,
+        )
+        if (__COMPAT__) {
+          // pass runtime compat config into the compiler
+          finalCompilerOptions.compatConfig = Object.create(globalCompatConfig)
+          if (Component.compatConfig) {
+            // @ts-expect-error types are not compatible
+            extend(finalCompilerOptions.compatConfig, Component.compatConfig)
+          }
+        }
+        Component.render = compile(template, finalCompilerOptions)
+        if (__DEV__) {
+          endMeasure(instance, `compile`)
+        }
+      }
+    }
+
+    instance.render = (Component.render || NOOP) as InternalRenderFunction
+
+    // for runtime-compiled render functions using `with` blocks, the render
+    // proxy used needs a different `has` handler which is more performant and
+    // also only allows a whitelist of globals to fallthrough.
+    if (installWithProxy) {
+      installWithProxy(instance)
+    }
+  }
+
+  // support for 2.x options
+  if (__FEATURE_OPTIONS_API__ && !(__COMPAT__ && skipOptions)) {
+    const reset = setCurrentInstance(instance)
+    pauseTracking()
+    try {
+      applyOptions(instance)
+    } finally {
+      resetTracking()
+      reset()
+    }
+  }
+
+  // warn missing template/render
+  // the runtime compilation of template in SSR is done by server-render
+  if (__DEV__ && !Component.render && instance.render === NOOP && !isSSR) {
+    /* istanbul ignore if */
+    if (!compile && Component.template) {
+      warn(
+        `Component provided template option but ` +
+          `runtime compilation is not supported in this build of Vue.` +
+          (__ESM_BUNDLER__
+            ? ` Configure your bundler to alias "vue" to "vue/dist/vue.esm-bundler.js".`
+            : __ESM_BROWSER__
+              ? ` Use "vue.esm-browser.js" instead.`
+              : __GLOBAL__
+                ? ` Use "vue.global.js" instead.`
+                : ``) /* should not happen */,
+      )
+    } else {
+      warn(`Component is missing template or render function.`)
+    }
   }
 }
 ```
