@@ -67,3 +67,11 @@ function handleClick() {
   > 什么是合成事件：是指将原生[事件](https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Building_blocks/Events)合成为一个React事件，目的是解决浏览器的不一致性。
   从v17.0.0开始, React 不会再将事件处理添加到 document 上, 而是将事件处理添加到渲染 React 树的根 DOM 容器中。  
 ![图片](/img/react_17_delegation.png)
+
+
+
+
+## 阻止冒泡
+
+1. 在16版本中，阻止冒泡的e.stopPropagation 是无效的
+2. 在18版本中，阻止冒泡是e.stopPropagation可以的
