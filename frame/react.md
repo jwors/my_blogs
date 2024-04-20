@@ -74,4 +74,4 @@ function handleClick() {
 ## 阻止冒泡
 
 1. 在16版本中，阻止冒泡的e.stopPropagation 是无效的
-2. 在18版本中，阻止冒泡是e.stopPropagation可以的
+2. 在>=17版本中，阻止冒泡是e.stopPropagation可以的
