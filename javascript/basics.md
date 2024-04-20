@@ -80,3 +80,10 @@ const person1 = myNew(Person, 'Alice', 30);
 * If the argument(参数) passed to isNaN() is not a number, isNaN() returns true.
 * If the argument is a number, isNaN() tries to convert it to a number first. If the conversion is successful and the resulting value is NaN, isNaN() returns true. If the conversion results in a valid number, isNaN() returns false.
 * Number.isNaN： judge arg is NaN
+
+
+## return break container
+
+1. 函数中的 return 语句用来返回函数调用后的返回值
+2. container 语句用于结束当前（或标签）的循环语句的本次迭代，并继续执行循环的下一次迭代。
+3. break 语句用于立即退出最内层的循环或 switch 语句。
