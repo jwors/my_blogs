@@ -82,6 +82,12 @@ const person1 = myNew(Person, 'Alice', 30);
 * Number.isNaN： judge arg is NaN
 
 
+## return break container
+
+1. 函数中的 return 语句用来返回函数调用后的返回值
+2. container 语句用于结束当前（或标签）的循环语句的本次迭代，并继续执行循环的下一次迭代。
+3. break 语句用于立即退出最内层的循环或 switch 语句。
+
 ## AO (GLOBAL OBJECT 全局作用域)
 
 ## GO (ACTIVATION	OBJECT 局部作用域)
