@@ -167,3 +167,7 @@ fn main() {
 
 
 ```
+
+## 更新cargo
+
+> 当在toml文件内新增内容的时候，不必执行类似npm install 的方法，直接执行 cargo build即可
