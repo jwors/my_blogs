@@ -127,7 +127,6 @@ fn main() {
 转移所有权：将数据的所有权从一个作用域移动到另一个作用域。
 递归类型：在定义递归数据结构时使用。
 
-
 ## 生命周期
 
 >生命周期（lifetime）是这样一种概念，编译器（中的借用检查器）用它来保证所有的借用都是有效的。确切地说，一个变量的生命周期在它创建的时候开始，在它销毁的时候结束。虽然生命周期和作用域经常被一起提到，但它们并不相同。例如考虑这种情况，我们通过 & 来借用一个变量。该借用拥有一个生命周期，此生命周期由它声明的位置决定。于是，只要该借用在出借者（lender）被销毁前结束，借用就是有效的。然而，借用的作用域则是由使用引用的位置决定的。
@@ -171,3 +170,69 @@ fn main() {
 ## 更新cargo
 
 > 当在toml文件内新增内容的时候，不必执行类似npm install 的方法，cargo 会自动安装
+
+## 重载
+
+> 就是为了解决自定义数据类型相加等问题
+
+```rust
+use std::ops::Add;
+
+#[derive(Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+// 为 Point 实现 Add 特性
+impl Add for Point {
+    type Output = Point;
+
+    fn add(self, other: Point) -> Point {
+        Point {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+fn main() {
+    let p1 = Point { x: 1, y: 2 };
+    let p2 = Point { x: 3, y: 4 };
+    let p3 = p1 + p2;
+
+    println!("{:?}", p3); // 输出 Point { x: 4, y: 6 }
+}
+
+
+```
+
+```javascript
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    add(other) {
+        return new Point(this.x + other.x, this.y + other.y);
+    }
+}
+
+const p1 = new Point(1, 2);
+const p2 = new Point(3, 4);
+const p3 = p1.add(p2);
+
+console.log(p3); // 输出 Point { x: 4, y: 6 }
+
+```
+
+## struct Unit
+
+1. 单元结构体：一种不包含任何字段的结构体，用于类型标记、实现特性或作为占位符。
+2. 单元类型：一种特殊类型，表示没有任何值或只有一个值，通常用于函数没有返回值的情况。
+
+
+## 难点
+
+1. 闭包
