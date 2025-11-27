@@ -21,7 +21,7 @@ function _traverse (val: any, seen: SimpleSet) {
   if ((!isA && !isObject(val)) || Object.isFrozen(val) || val instanceof VNode) {
     return
   }
-  // 不满足上面的条件之后 才会进行深度的监听 
+  // 不满足上面的条件之后 才会进行深度的监听  递归便利
   if (val.__ob__) {
     const depId = val.__ob__.dep.id
     if (seen.has(depId)) {
